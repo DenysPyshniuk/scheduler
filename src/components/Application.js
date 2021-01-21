@@ -8,53 +8,56 @@ import "components/Application.scss";
 
 
 
-const appointments = [
-  {
-    id: 1,
-    time: "12pm",
-  },
-  {
-    id: 2,
-    time: "1pm",
-    interview: {
-      student: "Lydia Miller-Jones",
-      interviewer: {
-        id: 1,
-        name: "Sylvia Palmer",
-        avatar: "https://i.imgur.com/LpaY82x.png",
-      },
-    },
-  },
-  {
-    id: 3,
-    time: "2pm",
-  },
-  {
-    id: 4,
-    time: "4pm",
-    interview: {
-      student: "Denys Pyshniuk",
-      interviewer: {
-        id: 3,
-        name: "Mildred Nazir",
-        avatar: "https://i.imgur.com/T2WwVfS.png",
-      },
-    },
-  },
-];
+// const appointments = [
+//   {
+//     id: 1,
+//     time: "12pm",
+//   },
+//   {
+//     id: 2,
+//     time: "1pm",
+//     interview: {
+//       student: "Lydia Miller-Jones",
+//       interviewer: {
+//         id: 1,
+//         name: "Sylvia Palmer",
+//         avatar: "https://i.imgur.com/LpaY82x.png",
+//       },
+//     },
+//   },
+//   {
+//     id: 3,
+//     time: "2pm",
+//   },
+//   {
+//     id: 4,
+//     time: "4pm",
+//     interview: {
+//       student: "Denys Pyshniuk",
+//       interviewer: {
+//         id: 3,
+//         name: "Mildred Nazir",
+//         avatar: "https://i.imgur.com/T2WwVfS.png",
+//       },
+//     },
+//   },
+// ];
 
 export default function Application(props) {
-  const [state, setDays] = useState({
+  const [state, setState] = useState({
     day: "Monday",
     days: [],
     appointments: {}
-});
+  });
+
+  const setDay = day => setState({ ...state, day });
+  const setDays = days => setState(prev => ({...prev, days}));
+
   //renders data for days (nav bar)
   useEffect(() => {
-    axios.get("/api/days").then(response => {
-        setDays(response.data)
-    });
+    axios.get("/api/days").then(response => setDays(response.data));
   }, []);
+
   return (
     <main className="layout">
       <section className="sidebar">
@@ -65,7 +68,7 @@ export default function Application(props) {
         />
         <hr className="sidebar__separator sidebar--centered" />
         <nav className="sidebar__menu">
-          <DayList days={state.days} day={state.day} setDay={setDays} />
+          <DayList days={state.days} day={state.day} setDay={setDay} />
         </nav>
         <img
           className="sidebar__lhl sidebar--centered"
