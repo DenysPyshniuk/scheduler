@@ -1,8 +1,8 @@
 import React from "react";
-
+//Style
 import "components/Appointment/styles.scss";
-import useVisualMode from "hooks/useVisualMode";
 //import components
+import useVisualMode from "hooks/useVisualMode";
 import Header from "components/Appointment/Header";
 import Show from "components/Appointment/Show";
 import Empty from "components/Appointment/Empty";
@@ -28,23 +28,21 @@ export default function Appointment(props) {
     props.interview ? SHOW : EMPTY
   );
 
-  // SAVE appointment Function
+  // SAVE appointment
   function save(name, interviewer) {
     const interview = {
       student: name,
       interviewer,
     };
-
     transition(SAVING);
-
     props
       .bookInterview(props.id, interview)
       .then(() => transition(SHOW))
       .catch((error) => transition(ERROR_SAVE, true));
   }
 
-  // DELETE APPOINTMENT:
-  function destroy(id) {
+  // DELETE appointment
+  function destroy(event) {
     transition(DELETE, true);
     props
       .cancelInterview(props.id)
