@@ -56,6 +56,7 @@ const useApplicationData = () => {
       setState({ ...state, appointments });
     });
   }
+  return { cancelInterview, setDay, state, bookInterview };
 };
 
 export default useApplicationData;
