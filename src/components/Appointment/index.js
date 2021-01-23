@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
+
 //Style
 import "components/Appointment/styles.scss";
+
 //import components
 import useVisualMode from "hooks/useVisualMode";
 import Header from "components/Appointment/Header";
@@ -27,6 +29,14 @@ export default function Appointment(props) {
   const { mode, transition, back } = useVisualMode(
     props.interview ? SHOW : EMPTY
   );
+  useEffect(() => {
+    if (props.interview && mode === EMPTY) {
+      transition(SHOW);
+    }
+    if (props.interview === null && mode === SHOW) {
+      transition(EMPTY);
+    }
+  }, [transition, mode, props.interview]);
 
   // SAVE appointment
   function save(name, interviewer) {
@@ -49,7 +59,6 @@ export default function Appointment(props) {
       .then(() => transition(EMPTY))
       .catch((error) => transition(ERROR_DELETE, true));
   }
-
   return (
     <article className="appointment">
       <Header time={props.time} id={props.id} />
@@ -57,7 +66,7 @@ export default function Appointment(props) {
       {mode === SHOW && props.interview && (
         <Show
           student={props.interview.student}
-          interviewer={props.interview.interviewer.name}
+          interviewer={props.interview.interviewer}
           onDelete={() => transition(CONFIRM)}
           onEdit={() => transition(EDIT)}
         />
