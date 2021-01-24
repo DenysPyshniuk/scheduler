@@ -29,6 +29,7 @@ const useApplicationData = () => {
 
   //BOOK INTERVIEW FUNCTION
   function bookInterview(id, interview) {
+    const foundDay = state.days.find((day) => day.appointments.includes(id));
     const appointment = {
       ...state.appointments[id],
       interview: { ...interview },
@@ -37,13 +38,26 @@ const useApplicationData = () => {
       ...state.appointments,
       [id]: appointment,
     };
+
+    const days = state.days.map((day) => {
+      if (
+        day.name === foundDay.name &&
+        state.appointments[id].interview === null
+      ) {
+        return { ...day, spots: day.spots - 1 };
+      } else {
+        return day;
+      }
+    });
+
     return axios.put(`/api/appointments/${id}`, appointment).then(() => {
-      return setState({ ...state, appointments });
+      return setState({ ...state, appointments, days });
     });
   }
 
   //CANCEL INTERVIEW FUNCTION
   function cancelInterview(id) {
+    const foundDay = state.days.find((day) => day.appointments.includes(id));
     const appointment = {
       ...state.appointments[id],
       interview: null,
@@ -52,8 +66,17 @@ const useApplicationData = () => {
       ...state.appointments,
       [id]: appointment,
     };
+
+    const days = state.days.map((day, index) => {
+      if (day.name === foundDay.name) {
+        return { ...day, spots: day.spots + 1 };
+      } else {
+        return day;
+      }
+    });
+
     return axios.delete(`/api/appointments/${id}`).then(() => {
-      setState({ ...state, appointments });
+      setState({ ...state, appointments, days });
     });
   }
   return { cancelInterview, setDay, state, bookInterview };
