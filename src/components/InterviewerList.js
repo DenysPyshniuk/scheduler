@@ -1,8 +1,14 @@
 import React from "react";
+import PropTypes from "prop-types";
 import "components/InterviewerList.scss";
 import InterviewerListItem from "components/InterviewerListItem";
 
 export default function InterviewerList(props) {
+  //VALIDATION
+  InterviewerList.propTypes = {
+    interviewers: PropTypes.array.isRequired,
+  };
+  //RETURNING EACH INTERVIEWER FROM THE INTERVIEWERS LIST
   const interviewers = props.interviewers.map((interviewer) => {
     return (
       <InterviewerListItem
