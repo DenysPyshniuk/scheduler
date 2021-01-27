@@ -60,7 +60,7 @@ export default function Appointment(props) {
       .catch((error) => transition(ERROR_DELETE, true));
   }
   return (
-    <article className="appointment">
+    <article data-testid="appointment" className="appointment">
       <Header time={props.time} id={props.id} />
       {mode === EMPTY && <Empty onAdd={() => transition(CREATE)} />}
       {mode === SHOW && props.interview && (
