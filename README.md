@@ -9,6 +9,26 @@
 - Edit interview
   !["Profile page"](https://github.com/DenysPyshniuk/scheduler/blob/master/public/images/Screenshot-3.png?raw=true)
 
+## App Highlights:
+
+- Book your appointment
+- See if any spots avaliable
+- Edit or Delite your appointment
+
+## Technologies have been used for the project:
+
+- React
+- Webpack
+- Axios
+
+## More than 90% test Coverage:
+
+- Storybook
+- Webpack
+- Dev Server
+- Jest.
+- Testing Library
+
 ## Setup
 
 Install dependencies with `npm install`.
