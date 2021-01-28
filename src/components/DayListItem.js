@@ -2,6 +2,7 @@ import React from "react";
 import classnames from "classnames";
 import "components/DayListItem.scss";
 
+// DayListItem COMPONENT:
 export default function DayListItem(props) {
   function formatSpots(spots) {
     if (spots === 0) {
@@ -16,7 +17,10 @@ export default function DayListItem(props) {
   }
 
   const dayClass = classnames("day-list__item", {
+    // FOR SELECTED DAY STYLE
     "day-list__item--selected": props.selected,
+
+    // FOR NO SPOTS AVALIABLE STYLE
     "day-list__item--full": props.spots === 0,
   });
 

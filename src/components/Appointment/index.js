@@ -29,6 +29,7 @@ export default function Appointment(props) {
   const { mode, transition, back } = useVisualMode(
     props.interview ? SHOW : EMPTY
   );
+  // IN CASE IF DATABASE HAS SOME EMPTY INTERVIEWS
   useEffect(() => {
     if (props.interview && mode === EMPTY) {
       transition(SHOW);
@@ -51,7 +52,7 @@ export default function Appointment(props) {
       .catch((error) => transition(ERROR_SAVE, true));
   }
 
-  // DELETE appointment
+  // DELETE APPOINTMENT
   function destroy(event) {
     transition(DELETE, true);
     props
