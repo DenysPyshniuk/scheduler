@@ -23,6 +23,7 @@
 
 ## More than 90% test Coverage:
 
+- Cypress
 - Storybook
 - Webpack
 - Dev Server
