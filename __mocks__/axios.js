@@ -53,35 +53,39 @@ const fixtures = {
   },
 };
 
-export default {
+module.exports = {
   get: jest.fn((url) => {
-    if (url === "/api/days") {
+    const path = typeof url === "string" ? url : (url && url.url) || "";
+    if (path.includes("/api/days")) {
       return Promise.resolve({
         status: 200,
         statusText: "OK",
         data: fixtures.days,
       });
     }
-
-    if (url === "/api/appointments") {
+    if (
+      path.includes("/api/appointments") &&
+      !path.match(/\/api\/appointments\/\d+$/)
+    ) {
       return Promise.resolve({
         status: 200,
         statusText: "OK",
         data: fixtures.appointments,
       });
     }
-
-    if (url === "/api/interviewers") {
+    if (path.includes("/api/interviewers")) {
       return Promise.resolve({
         status: 200,
         statusText: "OK",
         data: fixtures.interviewers,
       });
     }
+    return Promise.resolve({ status: 200, data: null });
   }),
 
   put: jest.fn((url) => {
-    if (url.includes("api/appointments")) {
+    const path = typeof url === "string" ? url : (url && url.url) || "";
+    if (path.includes("api/appointments")) {
       return Promise.resolve({
         status: 204,
         statusText: "No Content",
@@ -90,7 +94,8 @@ export default {
   }),
 
   delete: jest.fn((url) => {
-    if (url === "/api/appointments/2") {
+    const path = typeof url === "string" ? url : (url && url.url) || "";
+    if (path.includes("/api/appointments/2")) {
       return Promise.resolve({
         status: 204,
         statusText: "No Content",
