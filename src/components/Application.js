@@ -1,7 +1,6 @@
 import React from "react";
 
 // Style
-import "components/Application.scss";
 
 //Components
 import DayList from "components/DayList";
