@@ -2,13 +2,13 @@ version: 2
 jobs:
   build:
     docker:
-      - image: cimg/node:22
+      - image: cimg/node:22.11
 
     working_directory: ~/client
 
     steps:
       - checkout
-      - run: corepack enable && corepack prepare pnpm@latest --activate
+      - run: npm install -g pnpm@9
       - restore_cache:
           keys:
             - pnpm-v1-{{ checksum "pnpm-lock.yaml" }}
