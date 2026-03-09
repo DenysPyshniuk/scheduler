@@ -21,10 +21,14 @@ export default function Form(props) {
     props.onCancel();
   };
 
-  //VALIDATES THAT TEXT IS PROVIDED AND SAVES IT
+  //VALIDATES THAT TEXT AND INTERVIEWER ARE PROVIDED AND SAVES IT
   function validate() {
     if (name === "") {
       setError("Student name cannot be blank");
+      return;
+    }
+    if (interviewer == null) {
+      setError("Please select an interviewer");
       return;
     }
     setError("");
