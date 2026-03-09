@@ -66,7 +66,11 @@ export default function Appointment(props) {
       {mode === SHOW && props.interview && (
         <Show
           student={props.interview.student}
-          interviewer={props.interview.interviewer}
+          interviewer={
+            typeof props.interview.interviewer === "number"
+              ? props.interviewers[props.interview.interviewer]
+              : props.interview.interviewer
+          }
           onDelete={() => transition(CONFIRM)}
           onEdit={() => transition(EDIT)}
         />
@@ -93,7 +97,11 @@ export default function Appointment(props) {
           onSave={save}
           onCancel={() => transition(SHOW)}
           name={props.interview.student}
-          interviewer={props.interview.interviewer.id}
+          interviewer={
+            typeof props.interview.interviewer === "number"
+              ? props.interview.interviewer
+              : props.interview.interviewer?.id
+          }
         />
       )}
 
