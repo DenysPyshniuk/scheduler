@@ -13,8 +13,6 @@ import {
 
 import Application from "components/Application";
 
-import axios from "axios";
-
 const fixtures = {
   days: [
     { id: 1, name: "Monday", appointments: [1, 2], interviewers: [1, 2], spots: 1 },
@@ -34,20 +32,18 @@ const fixtures = {
   },
 };
 
-jest.mock("axios", () => ({
-  get: jest.fn((url) => {
-    const path = typeof url === "string" ? url : (url && url.url) || "";
-    if (path.includes("/api/days")) return Promise.resolve({ status: 200, data: fixtures.days });
-    if (path.includes("/api/appointments") && !path.match(/\/api\/appointments\/\d+$/)) return Promise.resolve({ status: 200, data: fixtures.appointments });
-    if (path.includes("/api/interviewers")) return Promise.resolve({ status: 200, data: fixtures.interviewers });
-    return Promise.resolve({ status: 200, data: null });
-  }),
-  put: jest.fn(() => Promise.resolve({ status: 204 })),
-  delete: jest.fn(() => Promise.resolve({ status: 204 })),
+jest.mock("lib/storage", () => ({
+  loadData: jest.fn(() => fixtures),
+  saveData: jest.fn(),
 }));
 
 describe("Application", () => {
-  // TEST 1
+  beforeEach(() => {
+    jest.clearAllMocks();
+    const { loadData } = require("lib/storage");
+    loadData.mockReturnValue(fixtures);
+  });
+
   it("changes the schedule when a new day is selected", async () => {
     const { getByText } = render(<Application />);
 
@@ -57,17 +53,16 @@ describe("Application", () => {
 
     expect(getByText("Leopold Silvers")).toBeInTheDocument();
   });
-  // TEST 2
+
   it("loads data, books an interview and reduces the spots remaining for the first day by 1", async () => {
-    const { container, debug } = render(<Application />);
+    const { container } = render(<Application />);
 
     await waitFor(() =>
       expect(getByText(container, "Archie Cohen")).toBeInTheDocument()
     );
 
     const appointments = getAllByTestId(container, "appointment");
-
-    const appointment = getAllByTestId(container, "appointment")[0];
+    const appointment = appointments[0];
 
     fireEvent.click(getByAltText(appointment, "Add"));
 
@@ -90,7 +85,7 @@ describe("Application", () => {
 
     expect(getByText(day, "no spots remaining")).toBeInTheDocument();
   });
-  // TEST 3
+
   it("loads data, cancels an interview and increases the spots remaining for Monday by 1", async () => {
     const { container } = render(<Application />);
 
@@ -123,7 +118,7 @@ describe("Application", () => {
 
     expect(getByText(day, "2 spots remaining")).toBeInTheDocument();
   });
-  // TEST 4
+
   it("loads data, edits an interview and keeps the spots remaining for Monday the same", async () => {
     const { container } = render(<Application />);
 
@@ -160,9 +155,12 @@ describe("Application", () => {
 
     expect(getByText(day, "1 spot remaining")).toBeInTheDocument();
   });
-  // TEST 5
-  it("shows the save error when failing to save an appointment", async () => {
-    axios.put.mockRejectedValueOnce();
+
+  it("shows the save error when save fails", async () => {
+    const { saveData } = require("lib/storage");
+    saveData.mockImplementationOnce(() => {
+      throw new Error("Storage failed");
+    });
 
     const { container } = render(<Application />);
 
@@ -189,11 +187,16 @@ describe("Application", () => {
 
     fireEvent.click(queryByAltText(appointment, "Close"));
 
-    expect(queryByText(appointment, "Archie Cohen"));
+    await waitFor(() =>
+      expect(queryByText(container, "Can't Save Appointment")).not.toBeInTheDocument()
+    );
   });
-  // TEST 6
-  it("shows the delete error when failing to delete an existing appointment", async () => {
-    axios.delete.mockRejectedValueOnce();
+
+  it("shows the delete error when save fails after delete", async () => {
+    const { saveData } = require("lib/storage");
+    saveData.mockImplementationOnce(() => {
+      throw new Error("Storage failed");
+    });
 
     const { container } = render(<Application />);
 
@@ -220,6 +223,8 @@ describe("Application", () => {
 
     fireEvent.click(queryByAltText(appointment, "Close"));
 
-    expect(queryByText(appointment, "Archie Cohen"));
+    await waitFor(() =>
+      expect(queryByText(container, "Can't Delete Appointment")).not.toBeInTheDocument()
+    );
   });
 });
