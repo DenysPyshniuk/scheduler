@@ -11,11 +11,21 @@ const useApplicationData = () => {
 
   const setDay = (day) => setState((prev) => ({ ...prev, day }));
 
+  function updateSpots(days, appointments) {
+    return days.map((day) => {
+      const spots = day.appointments.reduce((count, id) => {
+        return appointments[id].interview ? count : count + 1;
+      }, 0);
+      return { ...day, spots };
+    });
+  }
+
   useEffect(() => {
     const { days, appointments, interviewers } = loadData();
+    const daysWithSpots = updateSpots(days, appointments);
     setState((prev) => ({
       ...prev,
-      days,
+      days: daysWithSpots,
       appointments,
       interviewers,
     }));
@@ -30,7 +40,6 @@ const useApplicationData = () => {
   }
 
   function bookInterview(id, interview) {
-    const foundDay = state.days.find((day) => day.appointments.includes(id));
     const appointment = {
       ...state.appointments[id],
       interview: { ...interview },
@@ -40,15 +49,7 @@ const useApplicationData = () => {
       [id]: appointment,
     };
 
-    const days = state.days.map((day) => {
-      if (
-        day.name === foundDay.name &&
-        state.appointments[id].interview === null
-      ) {
-        return { ...day, spots: day.spots - 1 };
-      }
-      return day;
-    });
+    const days = updateSpots(state.days, appointments);
 
     const nextState = { ...state, appointments, days };
     setState(nextState);
@@ -61,7 +62,6 @@ const useApplicationData = () => {
   }
 
   function cancelInterview(id) {
-    const foundDay = state.days.find((day) => day.appointments.includes(id));
     const appointment = {
       ...state.appointments[id],
       interview: null,
@@ -71,12 +71,7 @@ const useApplicationData = () => {
       [id]: appointment,
     };
 
-    const days = state.days.map((day) => {
-      if (day.name === foundDay.name) {
-        return { ...day, spots: day.spots + 1 };
-      }
-      return day;
-    });
+    const days = updateSpots(state.days, appointments);
 
     const nextState = { ...state, appointments, days };
     setState(nextState);
